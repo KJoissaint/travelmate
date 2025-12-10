@@ -11,13 +11,14 @@
     "ios": {
       "supportsTablet": true,
       "ios": {
-      "supportsTablet": true,
-      "infoPlist": {
-        "NSAppTransportSecurity": {
-          "NSAllowsArbitraryLoads": true
+        "supportsTablet": true,
+        "infoPlist": {
+          "NSAppTransportSecurity": {
+            "NSAllowsArbitraryLoads": true
+          }
         }
-      }
-    }
+      },
+      "bundleIdentifier": "com.hesrondev.MyFirstApp"
     },
     "android": {
       "adaptiveIcon": {
@@ -27,7 +28,8 @@
         "monochromeImage": "./assets/images/android-icon-monochrome.png"
       },
       "edgeToEdgeEnabled": true,
-      "predictiveBackGestureEnabled": false
+      "predictiveBackGestureEnabled": false,
+      "package": "com.hesrondev.MyFirstApp"
     },
     "web": {
       "output": "static",
@@ -45,6 +47,15 @@
           "dark": {
             "backgroundColor": "#000000"
           }
+        }
+      ],
+      "expo-secure-store",
+      [
+        "expo-notifications",
+        {
+          "icon": "./assets/images/icon.png",
+          "color": "#ffffff",
+          "sounds": []
         }
       ]
     ],
