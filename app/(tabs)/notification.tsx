@@ -52,7 +52,7 @@ export default function NotificationScreen()    {
             addTestResult(`📱 Plateforme: ${token.platform}`);
             addTestResult(`🆔 Device: ${token.deviceId || 'N/A'}`);
          } else {
-            addTestResult('❌ Echec de l\'intialisation');
+            addTestResult(`❌ Echec de l\'intialisation`);
          }
     };
 

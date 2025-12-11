@@ -41,7 +41,7 @@ export const useNotifications = (
             setIsLoading(false);
         }
     };
-    
+
     const setupListeners = () => {
         cleanupRef.current = notifications.setupListeners(
             (n) => onReceived?.(n),
@@ -57,16 +57,18 @@ export const useNotifications = (
                 setPushToken(token);
                 setHasPermission(true);
             }
+            return token;
+
         } finally {
             setIsLoading(false);
         }
     }, []);
 
-    const send = useCallback((title: string , body: string, data?: any) => {
+    const send = useCallback((title: string, body: string, data?: any) => {
         return notifications.send(title, body, data);
     }, []);
 
-     const schedule = useCallback(async (title: string, body: string, date: Date, data?: any) => {
+    const schedule = useCallback(async (title: string, body: string, date: Date, data?: any) => {
         const id = await notifications.schedule(title, body, date, data);
         await refreshScheduled();
         return id;
@@ -74,7 +76,7 @@ export const useNotifications = (
 
 
 
-     const scheduleTripReminder = useCallback(async (id: string, title: string, date: Date) => {
+    const scheduleTripReminder = useCallback(async (id: string, title: string, date: Date) => {
         const id_ = await notifications.scheduleTripReminder(id, title, date);
         await refreshScheduled();
         return id_;
@@ -86,30 +88,30 @@ export const useNotifications = (
         await refreshScheduled();
     }, []);
 
-      const cancelAll = useCallback(async () => {
+    const cancelAll = useCallback(async () => {
         await notifications.cancelAll();
         await setScheduled([]);
     }, []);
 
-       const updatePreferences = useCallback(async (updates: Partial<NotificationPreferences>) => {
+    const updatePreferences = useCallback(async (updates: Partial<NotificationPreferences>) => {
         const current = preferences || await notifications.getPreferences();
-        const updated = {...current, ...updates};
+        const updated = { ...current, ...updates };
         await notifications.savePreferences(updated);
         setPreferences(updated);
     }, [preferences]);
 
-      const updateBadge = useCallback(async (count: number) => {
+    const updateBadge = useCallback(async (count: number) => {
         await notifications.setBadge(count);
         setBadgeCount(count)
     }, []);
 
-       const clearBadge = useCallback(async () => {
+    const clearBadge = useCallback(async () => {
         await notifications.clearBadge();
         setBadgeCount(0)
     }, []);
 
 
-       const refreshScheduled = useCallback(async () => {
+    const refreshScheduled = useCallback(async () => {
         const list = await notifications.getScheduled();
         setScheduled(list);
     }, []);
@@ -134,7 +136,7 @@ export const useNotifications = (
     };
 }
 
-export const useLastNotificationResponse = () =>  {
+export const useLastNotificationResponse = () => {
     const [response, setResponse] = useState<Notifications.NotificationResponse | null>(null);
     useEffect(() => {
         Notifications.getLastNotificationResponseAsync().then((r) => {

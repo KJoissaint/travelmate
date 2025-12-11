@@ -26,7 +26,7 @@ export default function HomeScreen() {
     { label: 'Trips', value: 12, icon: 'airplane-outline' },
     { label: 'Photos', value: 240, icon: 'camera-outline' },
     { label: 'Countries', value: 20, icon: 'globe-outline' },
-  ];
+  ] as const;
 
   const upcomingTrips = [
     {
@@ -51,7 +51,7 @@ export default function HomeScreen() {
     { icon: 'walk-outline', text: 'Went for a walk in the park', time: '2 hours ago' },
     { icon: 'camera-outline', text: 'Added 5 new photos to "Summer Trip"', time: '1 day ago' },
     { icon: 'airplane-outline', text: 'Booked a flight to New York', time: '3 days ago' },
-  ];
+  ] as const;
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
