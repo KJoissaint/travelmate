@@ -21,6 +21,7 @@ import * as ImagePicker from 'expo-image-picker';
 import * as Location from 'expo-location';
 import { LinearGradient } from "expo-linear-gradient";
 import { API } from "@/services/api";
+import { SharedStyles } from "@/constants/shared-styles";
 
 export default function AddTripModal() {
 
@@ -227,7 +228,7 @@ export default function AddTripModal() {
     };
 
     return (
-        <SafeAreaView style={styles.container} edges={['bottom']}>
+        <SafeAreaView style={SharedStyles.container} edges={['bottom']}>
             <Text style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 20 }}>Add New Trip</Text>
             <ScrollView>
                 <View style={styles.section}>
@@ -361,11 +362,6 @@ export default function AddTripModal() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        padding: 20,
-        backgroundColor: '#fff',
-    },
     section: {
         marginBottom: 24,
     },

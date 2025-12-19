@@ -4,6 +4,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import { useRouter } from "expo-router";
 import { useState } from "react";
 import { Alert, KeyboardAvoidingView, Platform, StyleSheet, Text, TextInput, TouchableOpacity, View, ScrollView } from "react-native";
+import { SharedStyles } from '@/constants/shared-styles';
 import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function LoginScreen() {
@@ -15,11 +16,33 @@ export default function LoginScreen() {
     const [password, setPassword] = useState('');
     const [name, setName] = useState('');
     const [showPassword, setshowPassword] = useState(false);
+    // Simple email validation function 
+    const validateEmail = (email: string) => { 
+        const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/; 
+        return regex.test(email); 
+    };
+    // Password must be at least 8 chars, include 1 uppercase, 1 number, and 1 special character 
+    const validatePassword = (password: string) => {
+         const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-= \[\] {};':"\\|,.<>\/?]).{8,}$/; 
+         return regex.test(password); 
+        };
 
     const handleSubmit = async () => {
 
         if (!email || !password) {
             Alert.alert('Erreur', 'Veuillez remplir tous les champs');
+            return;
+        }
+
+        if (!validateEmail(email)) {
+             Alert.alert('Erreur', 'Veuillez entrer un email valide'); 
+             return; 
+        }
+        if (!validatePassword(password)) {
+            Alert.alert(
+                'Erreur',
+                'Le mot de passe doit contenir au moins 8 caractères, une majuscule, un chiffre et un caractère spécial.'
+            );
             return;
         }
 
@@ -57,7 +80,7 @@ export default function LoginScreen() {
 
     return (
 
-        <SafeAreaView style={styles.container} edges={['top', 'bottom']}>
+        <SafeAreaView style={SharedStyles.container} edges={['top', 'bottom']}>
 
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -70,7 +93,7 @@ export default function LoginScreen() {
                 >
                     <LinearGradient
                         colors={['#a855f7', '#ec4899']}
-                        style={styles.header}
+                        style={SharedStyles.header}
                     >
                         <TouchableOpacity
                             onPress={() => router.back()}
@@ -78,7 +101,7 @@ export default function LoginScreen() {
                         >
                             <Ionicons name="arrow-back" size={24} color="#fff" />
                         </TouchableOpacity>
-                        <Text style={styles.headerTitle}>
+                        <Text style={SharedStyles.headerTitle}>
                             {isLoginMode
                                 ? 'Connectez-vous à votre compte'
                                 : 'Créez un nouveau compte'
@@ -88,10 +111,10 @@ export default function LoginScreen() {
                     <View style={styles.form}>
                         {
                             !isLoginMode && (
-                                <View style={styles.inputContainer}>
+                                <View style={SharedStyles.inputContainer}>
                                     <Ionicons name="person-outline" size={24} color="#6b7280" style={styles.inputIcon} />
                                     <TextInput
-                                        style={styles.input}
+                                        style={SharedStyles.input}
                                         placeholder="Nom complet"
                                         placeholderTextColor="#9ca3af"
                                         value={name}
@@ -104,10 +127,10 @@ export default function LoginScreen() {
                             )
                         }
 
-                        <View style={styles.inputContainer}>
+                        <View style={SharedStyles.inputContainer}>
                             <Ionicons name="mail-outline" size={24} color="#6b7280" style={styles.inputIcon} />
                             <TextInput
-                                style={styles.input}
+                                style={SharedStyles.input}
                                 placeholder="Email"
                                 placeholderTextColor="#9ca3af"
                                 value={email}
@@ -118,11 +141,16 @@ export default function LoginScreen() {
                             />
 
                         </View>
+                        {email.length > 0 && !validateEmail(email) && (
+                             <Text style={{ color: 'red', fontSize: 12, marginLeft: 16 }}>
+                                Adresse email invalide 
+                            </Text> 
+                        )}
 
-                        <View>
+                        <View style={SharedStyles.inputContainer}>
                             <Ionicons name="lock-closed-outline" size={24} color="#6b7280" style={styles.inputIcon} />
                             <TextInput
-                                style={styles.input}
+                                style={SharedStyles.input}
                                 placeholder="Mot de passe"
                                 placeholderTextColor="#9ca3af"
                                 value={password}
@@ -132,6 +160,7 @@ export default function LoginScreen() {
                                 autoCapitalize="none"
                                 editable={!isLoading}
                             />
+                            
 
                             <TouchableOpacity
                                 onPress={() => setshowPassword(!showPassword)}
@@ -140,9 +169,15 @@ export default function LoginScreen() {
                                 <Ionicons
                                     name={showPassword ? 'eye-off-outline' : 'eye-outline'}
                                     size={24}
-                                    color="#fff" />
+                                    color="#6b7280" />
                             </TouchableOpacity>
                         </View>
+                        {/* Live feedback under password field so the user can see at what point the password is good enough */}
+                        {password.length > 0 && !validatePassword(password) && 
+                            ( <Text style={{ color: 'red', fontSize: 12, marginLeft: 16 }}> 
+                            Mot de passe trop faible 
+                            </Text> 
+                        )}
                         <TouchableOpacity
                             onPress={handleSubmit}
                             style={[styles.submitButton, isLoading && styles.submitButtonDisabled]}
@@ -196,23 +231,13 @@ export default function LoginScreen() {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#f9fafb',
-    },
     keyboardView: {
         flex: 1,
     },
     scrollContent: {
         flexGrow: 1,
     },
-    header: {
-        paddingHorizontal: 24,
-        paddingTop: 16,
-        paddingBottom: 48,
-        borderBottomLeftRadius: 32,
-        borderBottomRightRadius: 32,
-    },
+   
     backButton: {
         width: 40,
         height: 40,
@@ -222,12 +247,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 24,
     },
-    headerTitle: {
-        fontSize: 32,
-        fontWeight: 'bold',
-        color: '#fff',
-        marginBottom: 8,
-    },
+    
     headerSubtitle: {
         fontSize: 16,
         color: 'rgba(255, 255, 255, 0.9)',
@@ -236,25 +256,10 @@ const styles = StyleSheet.create({
         padding: 24,
         flex: 1,
     },
-    inputContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#fff',
-        borderRadius: 12,
-        paddingHorizontal: 16,
-        marginBottom: 16,
-        borderWidth: 1,
-        borderColor: '#e5e7eb',
-    },
     inputIcon: {
         marginRight: 12,
     },
-    input: {
-        flex: 1,
-        height: 50,
-        fontSize: 16,
-        color: '#111827',
-    },
+    
     eyeButton: {
         padding: 4,
     },

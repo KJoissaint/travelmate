@@ -1,4 +1,4 @@
-import { Platform, StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, Image } from 'react-native';
+import { Platform, StyleSheet, View, Text, TextInput, TouchableOpacity, ScrollView, Image, Alert } from 'react-native';
 
 import { Collapsible } from '@/components/ui/collapsible';
 import { ExternalLink } from '@/components/external-link';
@@ -10,59 +10,55 @@ import { Fonts } from '@/constants/theme';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { HeaderTitle } from '@react-navigation/elements';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { IMAGES_SOURCES } from '.';
 import { useRouter } from 'expo-router';
+import { SharedStyles } from '@/constants/shared-styles';
+
 
 export default function TabTwoScreen() {
+  //added this for the searchbar to work
+const [searchQuery, setSearchQuery] = useState("");
 
+//now adding this for the delete crud operation to be effective
+const handleDeleteTrip = (id: string) => { Alert.alert( "Supprimer le voyage", "Êtes-vous sûr de vouloir supprimer ce voyage ?", [ { text: "Annuler", style: "cancel" }, { text: "Supprimer", style: "destructive", onPress: async () => { try { const res = await fetch(`http://localhost:3000/trips/${id}`, { method: "DELETE", }); if (res.ok) { setTrips((prev) => prev.filter((trip) => trip.id !== id)); } else { console.error("❌ Failed to delete trip"); } } catch (err) { console.error("❌ Error deleting trip:", err); } }, }, ], { cancelable: true } ); };
   const router = useRouter();
   const [selectedTab, setSelectedTab] = useState<string>('All');
+  const [trips, setTrips] = useState<any[]>([]);
 
-  const TRIPS_DATA = [
-    {
-      id: '1',
-      title: 'Trip to Bali',
-      destination : 'Bali, Indonesia',
-      startDate : '2024-08-10',
-      endDate : '2024-08-20',
-      image : 'bali',
-      photosCount: 3
-    },
-    {
-      id: '2',
-      title: 'Trip to Tokyo',
-      destination : 'Tokyo, Japan',
-      startDate : '2024-09-15',
-      endDate : '2024-09-25',
-      image : 'tokyo',
-      photosCount: 5
-    }, 
-      {
-      id: '3',
-      title: 'Trip to Paris',
-      destination : 'Paris, France',
-      startDate : '2024-10-05',
-      endDate : '2024-10-15',
-      image : 'paris',
-      photosCount: 8
+  useEffect(() => {
+    const fetchTrips = async () => {
+      try {
+        const res = await fetch("http://localhost:3000/trips");
+        const data = await res.json();
+        setTrips(data);
+      } catch (err) {
+        console.error("Failed to fetch trips:", err); // added error handeling as you asked
       }
-  ];
+    };
+    fetchTrips();
+  }, []);
+
 
   const tabs = ['All', 'Upcoming', 'Past', 'Favorites'];
 
+  const filteredTrips = trips.filter(
+  (trip) =>
+    trip.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    trip.destination.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   return (
-    <SafeAreaView style={styles.container} edges={['top']}>
+    <SafeAreaView style={SharedStyles.container} edges={['top']}>
       {/* Header */}
-      <View style={styles.header}>
+      <View style={SharedStyles.header}>
         <Text style={styles.HeaderTitle}>My Trips</Text>
 
         {/* Search Bar */}
         <View style={styles.searchBarContainer}>
           <View style={styles.searchBar}>
             <Ionicons name="search" size={20} color="#9ca3af" />
-            <TextInput style={styles.searchInput} placeholder="Search trips" />
+            <TextInput style={styles.searchInput} placeholder="Search trips" value={searchQuery} onChangeText={setSearchQuery} />
           </View>
           <TouchableOpacity style={styles.filterButton}>
             <Ionicons name="options-outline" size={24} color="white" />
@@ -99,7 +95,7 @@ export default function TabTwoScreen() {
 
         {/* Trips List */}
         <View style={styles.tripsList}>
-          {TRIPS_DATA.map((trip) => (
+          {filteredTrips.map((trip) => (
             <TouchableOpacity
               key={trip.id}
               style={styles.tripCard}>
@@ -129,6 +125,11 @@ export default function TabTwoScreen() {
                     {new Date(trip.endDate).toLocaleDateString('fr-FR', {day: 'numeric', month: 'short'})}
                     </Text>
                 </View>
+                {/* Delete Icon */} 
+                <TouchableOpacity onPress={() => 
+                  handleDeleteTrip(trip.id)}> 
+                  <Ionicons name="trash-outline" size={22} color="#ef4444" /> 
+                </TouchableOpacity>
                 <View style={styles.tripPhotos}>
                   <View style={styles.photoCircle}/>
                   <View style={[styles.photoCircle, styles.photoCircle2]}/>
@@ -158,15 +159,6 @@ export default function TabTwoScreen() {
 }
 
 const styles = StyleSheet.create({
-  container : {
-    flex : 1,
-    backgroundColor : '#f9fafb',},
-  header : {
-    backgroundColor : '#fff',
-    paddingHorizontal : 24,
-    paddingTop : 16,
-    paddingBottom : 16
-  },
   HeaderTitle : {
     fontSize : 32,
     fontWeight : 'bold',

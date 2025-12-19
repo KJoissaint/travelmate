@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     const [isAuthenticated, setIsAuthenticated] = useState(true); // Always authenticated
     const [error, setError] = useState<string | null>(null);
 
-    // Mock functions so i can test without logging in (i was having trouble fixing it)
+    // Mock functions so i can test without logging in (i was having trouble fixing itw)
     const login = useCallback(async (credentials: LoginCredentials) => {
         console.log('🔧 Mock login called');
         return { 

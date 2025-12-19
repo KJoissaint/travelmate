@@ -39,9 +39,10 @@ export default function NotificationScreen()    {
         setTestResults((prev) => [...prev, `${new Date().toLocaleTimeString()}: ${message}`]);
     }
 
-    useEffect(() => {
-        refreshScheduled();
-    });
+    //correcting it so it doesn't loop anymore
+    useEffect(() => 
+      { refreshScheduled(); }, 
+    [refreshScheduled]);
 
     const handleInitialize = async () => {
         addTestResult('🔄 Initialisation des notifications ...');
