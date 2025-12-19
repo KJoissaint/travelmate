@@ -1,3 +1,7 @@
+Membres du groupe 
+Slone Ngambo Mouafo
+Joissaint karl
+
 Pour ce projet, il est séparé en deux parties, front et back, dans deux dossiers distincts.
 Après le clonnage vous devrez:
 Naviger dans le dossier Back puis excécuter un npm install
