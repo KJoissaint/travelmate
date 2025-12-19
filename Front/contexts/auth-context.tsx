@@ -15,98 +15,40 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-    const [user, setUser] = useState<User | null>(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    // Mock user data
+    const [user, setUser] = useState<User | null>({
+        id: 'mock-user-123',
+        email: 'test@example.com',
+        name: 'Test User',
+        roles: ['user']
+    });
+    const [isLoading, setIsLoading] = useState(false);
+    const [isAuthenticated, setIsAuthenticated] = useState(true); // Always authenticated
     const [error, setError] = useState<string | null>(null);
 
-
-    const checkAuth = useCallback(async () => {
-        try {
-            setIsLoading(true);
-            setError(null);
-            const state = await auth.getAuthState();
-            setUser(state.user);
-            setIsAuthenticated(state.isAuthenticated);
-        } catch (err) {
-            setError(err instanceof Error ? err.message : 'Auth check failed');
-            setIsAuthenticated(false);
-            setUser(null);
-        } finally {
-            setIsLoading(false);
-        }
-    }, []);
-
-    useEffect(() => {
-        checkAuth();
-    }, []);
-
+    // Mock functions so i can test without logging in (i was having trouble fixing it)
     const login = useCallback(async (credentials: LoginCredentials) => {
-        try {
-            setIsLoading(true);
-            setError(null);
-            const { user, tokens } = await auth.login(credentials);
-            await new Promise(resolve => setTimeout(resolve, 100));
-            const state = await auth.getAuthState();
-
-            setUser(state.user);
-            setIsAuthenticated(state.isAuthenticated);
-
-            return { user, tokens };
-
-        } catch (err) {
-            const message = err instanceof Error ? err.message : 'Login failed';
-            setError(message);
-            setIsAuthenticated(false);
-            setUser(null);
-            throw err;
-        } finally {
-            setIsLoading(false);
-        }
-
-    }, []);
+        console.log('🔧 Mock login called');
+        return { 
+            user: user!, 
+            tokens: { accessToken: 'mock-token', refreshToken: 'mock-token', expiresAt: Date.now() + 3600000 } 
+        };
+    }, [user]);
 
     const register = useCallback(async (data: RegisterData) => {
-        try {
-            setIsLoading(true);
-            setError(null);
-            const { user, tokens } = await auth.register(data);
-            // Attendre un peu pour que SecureStore sauvegarde
-            await new Promise(resolve => setTimeout(resolve, 100));
-            // Vérifier l'état après sauvegarde
-            const state = await auth.getAuthState();
-            setUser(state.user);
-            setIsAuthenticated(state.isAuthenticated);
-            console.log('✅ [useAuth] Register completed, auth state:', state.isAuthenticated);
-            return { user, tokens };
-        } catch (err) {
-            const message = err instanceof Error ? err.message : 'Registration failed';
-            setError(message);
-            setIsAuthenticated(false);
-            setUser(null);
-            throw err;
-        } finally {
-            setIsLoading(false);
-        }
-    }, []);
+        console.log('🔧 Mock register called');
+        return { 
+            user: user!, 
+            tokens: { accessToken: 'mock-token', refreshToken: 'mock-token', expiresAt: Date.now() + 3600000 } 
+        };
+    }, [user]);
 
     const logout = useCallback(async () => {
-        try {
-            setIsLoading(true);
-            setError(null);
-            await auth.logout();
-            setUser(null);
-            setIsAuthenticated(false);
-        } catch (err) {
-            const message = err instanceof Error ? err.message : 'Logout failed';
-            setError(message);
-        } finally {
-            setIsLoading(false);
-        }
+        console.log('🔧 Mock logout called');
     }, []);
 
     const refreshAuth = useCallback(async () => {
-        await checkAuth();
+        console.log('🔧 Mock refreshAuth called');
     }, []);
 
     return (
