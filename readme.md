@@ -42,3 +42,6 @@ features:
 ## General
 
 corrigé le looping des notifications.
+
+suite à un problème technique, la vidéo n'a pas pu être faite dans les temps,
+et la génération de l'apk également, je vous prie d'utiliser le lien expo go généré par le projet, Merci d'avance!
